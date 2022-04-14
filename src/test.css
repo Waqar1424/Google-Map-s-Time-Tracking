@@ -1,0 +1,30 @@
+#floating-panel1 {
+    background-color: #fff;
+    margin-top: 30px;
+    font-family: "Roboto", "sans-serif";
+    line-height: 30px;
+  }
+  #mode{
+    width: 50%;
+    text-align: center;
+  }
+  .map{
+min-height: 100vh;
+  }
+.origin,button,p{
+    margin-top: 30px;
+}
+.container{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+}
+.button{
+    margin-top: 30px;
+    background-color: #13367d;
+}
+img{
+  height: 100%;
+  width: 40%;
+}
