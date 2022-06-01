@@ -4,7 +4,7 @@ import bitlogicx from './images/bitlogicx.png'
 import {Navbar, NavbarBrand} from 'reactstrap';
 import { useJsApiLoader, GoogleMap, Marker, Autocomplete, DirectionsRenderer} from '@react-google-maps/api';
 
-const center = {};
+
 const initial_time={};
 
 function App() {
@@ -14,6 +14,14 @@ function App() {
   const [distance, setDistance] = useState('');
   const [duration, setDuration] = useState('');
   const [actualTime, setActualTime]= useState('');
+  const [center, setCenter] =useState({
+    lat: '',
+    lng: ''
+  });
+  const [center2, setCenter2] =useState({
+    lat: 31.45958,
+    lng: 74.24640
+  });
   const [empty,setEmpty]=useState(false);
 
   /** @type React.MutableRefObject<HTMLInputElement> */
@@ -22,20 +30,51 @@ function App() {
   const destinationRef = useRef();
 
   useEffect (()=>{
+    console.log("working");
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        console.log("Latitude is :", position.coords.latitude);
-        console.log("Longitude is :", position.coords.longitude);
-        center.lat=position.coords.latitude;
-      center.lng=position.coords.longitude;
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setCenter({
+                    lat: pos.lat,
+                    lng: pos.lng
+                });
+        }
+      );
+      console.log(center.lat+ "  &  " + center.lng);
+    }else{
+        alert("Google Maps Not responding");
     }
+    console.log("another working check");
   });
 
   const {isLoaded} = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places']
   })
+
+  // Initialize and add the map
+function initMap() {
+  // The location of Uluru
+  const uluru = { lat: -25.344, lng: 131.031 };
+  // The map, centered at Uluru
+  // eslint-disable-next-line no-undef
+  const map = new google.maps.Map(document.getElementById("map1"), {
+    zoom: 4,
+    center: uluru,
+  });
+  // The marker, positioned at Uluru
+  // eslint-disable-next-line no-undef
+  const marker = new google.maps.Marker({
+    position: uluru,
+    map: map,
+  });
+}
+
+window.initMap = initMap;
 
     function getReverseGeocodingData() {
     // eslint-disable-next-line no-undef
@@ -111,14 +150,17 @@ function App() {
 }
 
   function actual_time(){
-    const currentTimeInSeconds2=Math.floor(Date.now()/1000); 
-    console.log(currentTimeInSeconds2);
-    const time=currentTimeInSeconds2-initial_time.currentTimeInSeconds1;
-    console.log(time);
-     const display=secondsToHms(time);
-     setActualTime(display);
-    console.log("Actual Time: "+display);
+    const endingTimeInSeconds=Math.floor(Date.now()/1000); 
+    console.log(endingTimeInSeconds);
+    const actual_sec=endingTimeInSeconds-initial_time.currentTimeInSeconds1;
+    console.log(actual_sec);
+     const hmsFormat=secondsToHms(actual_sec);
+     setActualTime(hmsFormat);
+    console.log("Actual Time: "+hmsFormat);
   }
+
+
+
   return (
     <div>
         <Navbar color="light" light>
@@ -151,6 +193,9 @@ function App() {
                   <button type="button" className="col-4 btn btn-danger offset-2" onClick={actual_time}>End</button>
 
                   <p><strong>Actual Time: </strong>{actualTime}</p>
+                  
+                  <h3>My Google Maps Demo</h3>
+                  <div id="map1"></div>
             </div>
             <div className="col-12 col-sm-8  map">
             <GoogleMap 
